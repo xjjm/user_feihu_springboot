@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+	例如namespace="com.szh.mapper.personMapper"就是com.szh.mapper(包名)+personMapper(personMapper.xml文件去除后缀) -->
+<mapper namespace="com.fh.mapper.UserMapper">
+
+    <sql id="whereSql">
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="areaId != null and areaId != -1">
+                and areaId = #{areaId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectCount" parameterType="com.fh.model.vo.UserQuery" resultType="java.lang.Long">
+        select count(*) from tt_user
+        <include refid="whereSql"></include>
+    </select>
+
+    <select id="selectUser" parameterType="com.fh.model.vo.UserQuery" resultType="com.fh.model.User">
+        select * from tt_user
+        <include refid="whereSql"></include>
+        limit #{start},#{length}
+    </select>
+
+    <select id="selectUserByName" parameterType="java.lang.String" resultType="com.fh.model.User">
+        select * from tt_user where name = #{name}
+    </select>
+
+    <insert id="addUser" parameterType="com.fh.model.User">
+        insert into tt_user(name,password,realname,imgpath,registerdate,areaId)
+        values (#{name},#{password},#{realname},#{imgpath},#{registerdate},#{areaId})
+    </insert>
+
+</mapper>
